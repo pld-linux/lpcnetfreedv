@@ -1,0 +1,62 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 680f52c..e536f30 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -52,6 +52,9 @@ message(STATUS "LPCNet version: ${LPCNET_VERSION}")
+ # Set default flags
+ set(CMAKE_C_FLAGS "-Wall -W -Wextra -Wno-unused-function -O3 -g -I. -MD ${CMAKE_C_FLAGS} -DENABLE_ASSERTIONS")
+ 
++# Arch specific stuff here
++message(STATUS "Host system arch is: ${CMAKE_SYSTEM_PROCESSOR}")
++
+ # Detection of available CPU optimizations
+ if(NOT DISABLE_CPU_OPTIMIZATION)
+     if(UNIX AND NOT APPLE)
+@@ -87,7 +90,7 @@ elseif(${AVX} OR ${AVX} GREATER 0)
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx")
+ endif()
+ 
+-# RPi
++# RPi / ARM 32bit
+ if(${NEON} OR ${NEON} GREATER 0)
+     message(STATUS "neon processor flags found or enabled.")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=neon -march=armv8-a -mtune=cortex-a53")
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 41a78dc..6c49f5e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -49,7 +49,7 @@ target_link_libraries(dump_data lpcnetfreedv m codec2)
+ add_executable(test_lpcnet test_lpcnet.c)
+ target_link_libraries(test_lpcnet lpcnetfreedv m codec2)
+ 
+-if(AVX OR AVX2)
++if(AVX OR AVX2 OR CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+     add_executable(test_vec test_vec.c)
+     target_link_libraries(test_vec m)
+ else()
+diff --git a/src/nnet.c b/src/nnet.c
+index 8ad4a26..ccb9c94 100644
+--- a/src/nnet.c
++++ b/src/nnet.c
+@@ -43,7 +43,7 @@
+ 
+ #ifdef __AVX__
+ #include "vec_avx.h"
+-#elif __ARM_NEON__
++#elif __ARM_NEON__ || __aarch64__
+ #include "vec_neon.h"
+ #else
+ #warning Compiling without any vectorization. This code will be very slow
+diff --git a/src/test_vec.c b/src/test_vec.c
+index 09b51e7..254292b 100644
+--- a/src/test_vec.c
++++ b/src/test_vec.c
+@@ -26,7 +26,7 @@ const char simd[]="AVX2";
+ #else
+ const char simd[]="AVX";
+ #endif
+-#elif __ARM_NEON__
++#elif __ARM_NEON__ || __aarch64__
+ #include "vec_neon.h"
+ const char simd[]="NEON";
+ #else
