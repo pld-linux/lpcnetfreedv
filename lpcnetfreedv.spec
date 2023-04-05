@@ -7,17 +7,15 @@
 Summary:	LPCNet for FreeDV
 Summary(pl.UTF-8):	LPCNet dla FreeDV
 Name:		lpcnetfreedv
-Version:	0.2
+Version:	0.3
 Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://github.com/drowe67/LPCNet/releases
 Source0:	https://github.com/drowe67/LPCNet/archive/v%{version}/LPCNet-%{version}.tar.gz
-# Source0-md5:	f4b87be1825bd3fd5936b481b0f93bac
+# Source0-md5:	81b850852bddfd92c264ba5f9c05d089
 Source1:	http://rowetel.com/downloads/deep/lpcnet_191005_v1.0.tgz
 # Source1-md5:	a86894b209a1869b50454fe591f047a1
-# Fixes for aarch64 which has NEON instructions natively
-Patch0:		%{name}-vector-updates.patch
 URL:		https://github.com/drowe67/LPCNet
 BuildRequires:	cmake >= 3.0
 BuildRequires:	codec2-devel >= 0.9
@@ -49,7 +47,6 @@ Pliki programistyczne LPCNet.
 
 %prep
 %setup -q -n LPCNet-%{version}
-%patch0 -p1
 
 %build
 install -d build
@@ -80,9 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING README.md
 %attr(755,root,root) %{_bindir}/lpcnet_dec
 %attr(755,root,root) %{_bindir}/lpcnet_enc
-%attr(755,root,root) %{_libdir}/liblpcnetfreedv.so
+%attr(755,root,root) %{_libdir}/liblpcnetfreedv.so.0.3
 
 %files devel
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/liblpcnetfreedv.so
 %{_includedir}/lpcnet
 %{_libdir}/cmake/lpcnetfreedv
