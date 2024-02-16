@@ -1,0 +1,10 @@
+--- LPCNet-0.5/src/CMakeLists.txt.orig	2023-05-05 21:42:19.000000000 +0200
++++ LPCNet-0.5/src/CMakeLists.txt	2024-02-16 05:31:49.759488612 +0100
+@@ -42,6 +42,7 @@ endif(LPCNET_C_PROC_FLAGS)
+ 
+ add_library(lpcnetfreedv SHARED ${lpcnet_freedv_srcs} ${codec2_import_srcs})
+ 
++target_link_libraries(lpcnetfreedv m)
+ set_target_properties(lpcnetfreedv PROPERTIES
+     PUBLIC_HEADER lpcnet_freedv.h
+ 	VERSION ${LPCNET_VERSION}
