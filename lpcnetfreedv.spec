@@ -47,7 +47,7 @@ Pliki programistyczne LPCNet.
 
 %prep
 %setup -q -n LPCNet-%{version}
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 install -d build
